@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Vocacional RIASEC</title>
+  <style>
+    :root {
+      --realista: #a8d8f0;
+      --investigador: #a8e6a1;
+      --artistico: #ffd4a3;
+      --social: #fff9a3;
+      --emprendedor: #d4a5ff;
+      --convencional: #d3d3d3;
+      --font: Calibri, Arial, sans-serif;
+    }
+    body {
+      font-family: var(--font);
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .datos {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 12px;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+    .datos label {
+      font-weight: bold;
+    }
+    .datos input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .instrucciones {
+      background: #e8f4f8;
+      padding: 15px;
+      border-left: 5px solid #3498db;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+    .categoria {
+      margin: 30px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .categoria h2 {
+      margin: 0;
+      padding: 12px 15px;
+      font-size: 16px;
+      color: white;
+      font-weight: bold;
+    }
+    .realista h2 { background: var(--realista); }
+    .investigador h2 { background: var(--investigador); }
+    .artistico h2 { background: var(--artistico); }
+    .social h2 { background: var(--social); }
+    .emprendedor h2 { background: var(--emprendedor); }
+    .convencional h2 { background: var(--convencional); color: #333; }
+
+    .pregunta {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+    .pregunta:last-child { border-bottom: none; }
+    .pregunta span.num {
+      width: 30px;
+      font-weight: bold;
+      color: #555;
+    }
+    .pregunta .texto {
+      flex: 1;
+    }
+    .pregunta label {
+      margin: 0 15px;
+      cursor: pointer;
+    }
+    .pregunta input[type="radio"] {
+      margin-right: 5px;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px 5px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-calcular {
+      background: #2c3e50;
+      color: white;
+    }
+    .btn-calcular:hover { background: #1a252f; }
+    .btn-reiniciar {
+      background: #e74c3c;
+      color: white;
+    }
+    .btn-reiniciar:hover { background: #c0392b; }
+
+    .resultados {
+      margin-top: 40px;
+      padding: 20px;
+      background: #f0f8ff;
+      border-radius: 8px;
+      display: none;
+    }
+    .info-personal {
+      background: #e9f7ff;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+    .tabla-puntajes {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+    .tabla-puntajes th, .tabla-puntajes td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    .tabla-puntajes th {
+      background: #ecf0f1;
+    }
+    .perfil-predominante {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      background: #d5f4e6;
+      border-radius: 6px;
+    }
+    .interpretacion {
+      margin-top: 30px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-left: 5px solid #27ae60;
+      font-size: 14px;
+    }
+    .interpretacion h3 {
+      margin-top: 0;
+      color: #27ae60;
+    }
+    .botones {
+      text-align: center;
+      margin: 30px 0;
+    }
+    @media (max-width: 600px) {
+      .datos { grid-template-columns: 1fr; }
+      .pregunta { flex-direction: column; align-items: flex-start; }
+      .pregunta label { margin: 5px 0; }
+      .btn { width: 100%; margin: 8px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>TEST VOCACIONAL RIASEC</h1>
+
+  <!-- DATOS PERSONALES -->
+  <div class="datos">
+    <label>Nombres:</label>
+    <div><input type="text" id="nombres" placeholder="Escribe tus nombres"></div>
+
+    <label>Apellidos:</label>
+    <div><input type="text" id="apellidos" placeholder="Escribe tus apellidos"></div>
+
+    <label>Edad:</label>
+    <div><input type="number" id="edad" min="10" max="100" placeholder="Edad"></div>
+
+    <label>Institución Educativa:</label>
+    <div><input type="text" id="institucion" placeholder="Ej. Colegio San Juan"></div>
+  </div>
+
+  <div class="instrucciones">
+    <p><strong>INSTRUCCIONES:</strong></p>
+    <p>Marca <strong>"SÍ"</strong> si la actividad te gusta o te parece interesante, <strong>"NO"</strong> si no te gusta.</p>
+    <p>No hay respuestas correctas o incorrectas. Responde con sinceridad.</p>
+  </div>
+
+  <!-- === REALISTA (1-10) === -->
+  <div class="categoria realista">
+    <h2>R - REALISTA</h2>
+    <div class="pregunta"><span class="num">1.</span><div class="texto">Me gusta trabajar con herramientas o máquinas.</div><label><input type="radio" name="q1" value="si"> SÍ</label><label><input type="radio" name="q1" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">2.</span><div class="texto">Disfruto arreglar objetos cuando se malogran.</div><label><input type="radio" name="q2" value="si"> SÍ</label><label><input type="radio" name="q2" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">3.</span><div class="texto">Prefiero actividades prácticas antes que las teóricas.</div><label><input type="radio" name="q3" value="si"> SÍ</label><label><input type="radio" name="q3" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">4.</span><div class="texto">Me siento cómodo siguiendo instrucciones paso a paso.</div><label><input type="radio" name="q4" value="si"> SÍ</label><label><input type="radio" name="q4" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">5.</span><div class="texto">Me gusta armar, construir o mover cosas.</div><label><input type="radio" name="q5" value="si"> SÍ</label><label><input type="radio" name="q5" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">6.</span><div class="texto">Me interesa trabajar al aire libre.</div><label><input type="radio" name="q6" value="si"> SÍ</label><label><input type="radio" name="q6" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">7.</span><div class="texto">Prefiero tareas donde pueda ver resultados concretos.</div><label><input type="radio" name="q7" value="si"> SÍ</label><label><input type="radio" name="q7" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">8.</span><div class="texto">Me gustan las actividades físicas o manuales.</div><label><input type="radio" name="q8" value="si"> SÍ</label><label><input type="radio" name="q8" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">9.</span><div class="texto">Me interesa aprender a usar equipos o instrumentos.</div><label><input type="radio" name="q9" value="si"> SÍ</label><label><input type="radio" name="q9" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">10.</span><div class="texto">Me siento bien trabajando con mis manos.</div><label><input type="radio" name="q10" value="si"> SÍ</label><label><input type="radio" name="q10" value="no"> NO</label></div>
+  </div>
+
+  <!-- === INVESTIGADOR (11-20) === -->
+  <div class="categoria investigador">
+    <h2>I - INVESTIGADOR</h2>
+    <div class="pregunta"><span class="num">11.</span><div class="texto">Me gusta investigar cómo funcionan las cosas.</div><label><input type="radio" name="q11" value="si"> SÍ</label><label><input type="radio" name="q11" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">12.</span><div class="texto">Disfruto resolver problemas complejos.</div><label><input type="radio" name="q12" value="si"> SÍ</label><label><input type="radio" name="q12" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">13.</span><div class="texto">Me llama la atención la ciencia y los experimentos.</div><label><input type="radio" name="q13" value="si"> SÍ</label><label><input type="radio" name="q13" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">14.</span><div class="texto">Prefiero analizar antes de actuar.</div><label><input type="radio" name="q14" value="si"> SÍ</label><label><input type="radio" name="q14" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">15.</span><div class="texto">Me interesa entender causas y consecuencias.</div><label><input type="radio" name="q15" value="si"> SÍ</label><label><input type="radio" name="q15" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">16.</span><div class="texto">Me gusta leer sobre temas científicos.</div><label><input type="radio" name="q16" value="si"> SÍ</label><label><input type="radio" name="q16" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">17.</span><div class="texto">Me gusta buscar información para comprender mejor algo.</div><label><input type="radio" name="q17" value="si"> SÍ</label><label><input type="radio" name="q17" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">18.</span><div class="texto">Disfruto las matemáticas o temas técnicos.</div><label><input type="radio" name="q18" value="si"> SÍ</label><label><input type="radio" name="q18" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">19.</span><div class="texto">Me interesa aprender cómo se generan nuevas ideas científicas.</div><label><input type="radio" name="q19" value="si"> SÍ</label><label><input type="radio" name="q19" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">20.</span><div class="texto">Me siento cómodo investigando y explorando datos.</div><label><input type="radio" name="q20" value="si"> SÍ</label><label><input type="radio" name="q20" value="no"> NO</label></div>
+  </div>
+
+  <!-- === ARTÍSTICO (21-30) === -->
+  <div class="categoria artistico">
+    <h2>A - ARTÍSTICO</h2>
+    <div class="pregunta"><span class="num">21.</span><div class="texto">Disfruto crear cosas nuevas o diferentes.</div><label><input type="radio" name="q21" value="si"> SÍ</label><label><input type="radio" name="q21" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">22.</span><div class="texto">Me gusta dibujar, pintar o diseñar.</div><label><input type="radio" name="q22" value="si"> SÍ</label><label><input type="radio" name="q22" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">23.</span><div class="texto">Prefiero actividades sin reglas muy rígidas.</div><label><input type="radio" name="q23" value="si"> SÍ</label><label><input type="radio" name="q23" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">24.</span><div class="texto">Me expreso bien a través del arte o la creatividad.</div><label><input type="radio" name="q24" value="si"> SÍ</label><label><input type="radio" name="q24" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">25.</span><div class="texto">Me interesan actividades musicales, escénicas o visuales.</div><label><input type="radio" name="q25" value="si"> SÍ</label><label><input type="radio" name="q25" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">26.</span><div class="texto">Me gusta imaginar posibilidades nuevas.</div><label><input type="radio" name="q26" value="si"> SÍ</label><label><input type="radio" name="q26" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">27.</span><div class="texto">Me atraen los colores, estilos y formas.</div><label><input type="radio" name="q27" value="si"> SÍ</label><label><input type="radio" name="q27" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">28.</span><div class="texto">Disfruto escribir, cantar o actuar.</div><label><input type="radio" name="q28" value="si"> SÍ</label><label><input type="radio" name="q28" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">29.</span><div class="texto">Me gusta tomar fotos o hacer videos.</div><label><input type="radio" name="q29" value="si"> SÍ</label><label><input type="radio" name="q29" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">30.</span><div class="texto">Me encantan los espacios donde puedo ser auténtico/a.</div><label><input type="radio" name="q30" value="si"> SÍ</label><label><input type="radio" name="q30" value="no"> NO</label></div>
+  </div>
+
+  <!-- === SOCIAL (31-40) === -->
+  <div class="categoria social">
+    <h2>S - SOCIAL</h2>
+    <div class="pregunta"><span class="num">31.</span><div class="texto">Me gusta ayudar a otras personas a resolver problemas.</div><label><input type="radio" name="q31" value="si"> SÍ</label><label><input type="radio" name="q31" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">32.</span><div class="texto">Disfruto trabajar en grupo.</div><label><input type="radio" name="q32" value="si"> SÍ</label><label><input type="radio" name="q32" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">33.</span><div class="texto">Me interesa enseñar o explicar ideas.</div><label><input type="radio" name="q33" value="si"> SÍ</label><label><input type="radio" name="q33" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">34.</span><div class="texto">Me siento bien escuchando a los demás.</div><label><input type="radio" name="q34" value="si"> SÍ</label><label><input type="radio" name="q34" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">35.</span><div class="texto">Me interesa participar en actividades comunitarias.</div><label><input type="radio" name="q35" value="si"> SÍ</label><label><input type="radio" name="q35" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">36.</span><div class="texto">Puedo comprender las emociones de otros.</div><label><input type="radio" name="q36" value="si"> SÍ</label><label><input type="radio" name="q36" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">37.</span><div class="texto">Me gusta orientar o aconsejar.</div><label><input type="radio" name="q37" value="si"> SÍ</label><label><input type="radio" name="q37" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">38.</span><div class="texto">Disfruto participar en actividades que mejoren la convivencia.</div><label><input type="radio" name="q38" value="si"> SÍ</label><label><input type="radio" name="q38" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">39.</span><div class="texto">Prefiero trabajos donde se interactúe con personas.</div><label><input type="radio" name="q39" value="si"> SÍ</label><label><input type="radio" name="q39" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">40.</span><div class="texto">Me siento cómodo hablando con distintos tipos de personas.</div><label><input type="radio" name="q40" value="si"> SÍ</label><label><input type="radio" name="q40" value="no"> NO</label></div>
+  </div>
+
+  <!-- === EMPRENDEDOR (41-50) === -->
+  <div class="categoria emprendedor">
+    <h2>E - EMPRENDEDOR</h2>
+    <div class="pregunta"><span class="num">41.</span><div class="texto">Me gusta liderar actividades o proyectos.</div><label><input type="radio" name="q41" value="si"> SÍ</label><label><input type="radio" name="q41" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">42.</span><div class="texto">Me siento cómodo tomando decisiones rápidas.</div><label><input type="radio" name="q42" value="si"> SÍ</label><label><input type="radio" name="q42" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">43.</span><div class="texto">Disfruto convencer o motivar a otras personas.</div><label><input type="radio" name="q43" value="si"> SÍ</label><label><input type="radio" name="q43" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">44.</span><div class="texto">Me interesa iniciar nuevos proyectos.</div><label><input type="radio" name="q44" value="si"> SÍ</label><label><input type="radio" name="q44" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">45.</span><div class="texto">Me atrae la idea de tener mi propio negocio.</div><label><input type="radio" name="q45" value="si"> SÍ</label><label><input type="radio" name="q45" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">46.</span><div class="texto">Me gusta coordinar y organizar grupos.</div><label><input type="radio" name="q46" value="si"> SÍ</label><label><input type="radio" name="q46" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">47.</span><div class="texto">Me interesa influir en las decisiones de un equipo.</div><label><input type="radio" name="q47" value="si"> SÍ</label><label><input type="radio" name="q47" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">48.</span><div class="texto">Me siento seguro hablando en público.</div><label><input type="radio" name="q48" value="si"> SÍ</label><label><input type="radio" name="q48" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">49.</span><div class="texto">Disfruto las actividades competitivas.</div><label><input type="radio" name="q49" value="si"> SÍ</label><label><input type="radio" name="q49" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">50.</span><div class="texto">Me interesa negociar o persuadir.</div><label><input type="radio" name="q50" value="si"> SÍ</label><label><input type="radio" name="q50" value="no"> NO</label></div>
+  </div>
+
+  <!-- === CONVENCIONAL (51-60) === -->
+  <div class="categoria convencional">
+    <h2>C - CONVENCIONAL</h2>
+    <div class="pregunta"><span class="num">51.</span><div class="texto">Me gusta mantener todo ordenado y bien estructurado.</div><label><input type="radio" name="q51" value="si"> SÍ</label><label><input type="radio" name="q51" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">52.</span><div class="texto">Disfruto trabajar con datos, números o archivos.</div><label><input type="radio" name="q52" value="si"> SÍ</label><label><input type="radio" name="q52" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">53.</span><div class="texto">Me siento cómodo siguiendo reglas claras.</div><label><input type="radio" name="q53" value="si"> SÍ</label><label><input type="radio" name="q53" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">54.</span><div class="texto">Prefiero trabajos donde haya procedimientos definidos.</div><label><input type="radio" name="q54" value="si"> SÍ</label><label><input type="radio" name="q54" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">55.</span><div class="texto">Me gusta clasificar o registrar información.</div><label><input type="radio" name="q55" value="si"> SÍ</label><label><input type="radio" name="q55" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">56.</span><div class="texto">Me interesan las tareas administrativas.</div><label><input type="radio" name="q56" value="si"> SÍ</label><label><input type="radio" name="q56" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">57.</span><div class="texto">Disfruto trabajar con listas, tablas o cronogramas.</div><label><input type="radio" name="q57" value="si"> SÍ</label><label><input type="radio" name="q57" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">58.</span><div class="texto">Me gusta cumplir objetivos paso a paso.</div><label><input type="radio" name="q58" value="si"> SÍ</label><label><input type="radio" name="q58" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">59.</span><div class="texto">Me siento bien cuando todo está organizado.</div><label><input type="radio" name="q59" value="si"> SÍ</label><label><input type="radio" name="q59" value="no"> NO</label></div>
+    <div class="pregunta"><span class="num">60.</span><div class="texto">Me interesa trabajar en oficinas o áreas administrativas.</div><label><input type="radio" name="q60" value="si"> SÍ</label><label><input type="radio" name="q60" value="no"> NO</label></div>
+  </div>
+
+  <div class="botones">
+    <button class="btn btn-calcular" onclick="calcularResultados()">VER MIS RESULTADOS</button>
+  </div>
+
+  <!-- === RESULTADOS === -->
+  <div class="resultados" id="resultados">
+    <h2 style="text-align:center; color:#2c3e50;">RESULTADOS</h2>
+
+    <div class="info-personal" id="infoPersonal"></div>
+
+    <table class="tabla-puntajes">
+      <tr><th>PERFIL</th><th>PUNTUACIÓN</th><th>/10</th></tr>
+      <tr><td>R - Realista</td><td id="pR">0</td><td>10</td></tr>
+      <tr><td>I - Investigador</td><td id="pI">0</td><td>10</td></tr>
+      <tr><td>A - Artístico</td><td id="pA">0</td><td>10</td></tr>
+      <tr><td>S - Social</td><td id="pS">0</td><td>10</td></tr>
+      <tr><td>E - Emprendedor</td><td id="pE">0</td><td>10</td></tr>
+      <tr><td>C - Convencional</td><td id="pC">0</td><td>10</td></tr>
+    </table>
+
+    <div class="perfil-predominante" id="perfilPredominante"></div>
+
+    <div class="interpretacion" id="interpretacion"></div>
+
+    <div class="botones">
+      <button class="btn btn-reiniciar" onclick="reiniciarTest()">INICIAR DE NUEVO</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function contarSi(inicio, fin) {
+  let count = 0;
+  for (let i = inicio; i <= fin; i++) {
+    const val = document.querySelector(`input[name="q${i}"]:checked`)?.value;
+    if (val === "si") count++;
+  }
+  return count;
+}
+
+function calcularResultados() {
+  const nombres = document.getElementById("nombres").value.trim();
+  const apellidos = document.getElementById("apellidos").value.trim();
+  const edad = document.getElementById("edad").value;
+  const institucion = document.getElementById("institucion").value.trim();
+
+  if (!nombres || !apellidos || !edad || !institucion) {
+    alert("Por favor, completa todos los datos personales.");
+    return;
+  }
+
+  document.getElementById("infoPersonal").innerHTML = `
+    <strong>Nombre completo:</strong> ${nombres} ${apellidos}<br>
+    <strong>Edad:</strong> ${edad} años<br>
+    <strong>Institución Educativa:</strong> ${institucion}
+  `;
+
+  const respuestas = [
+    contarSi(1, 10),  // R
+    contarSi(11, 20), // I
+    contarSi(21, 30), // A
+    contarSi(31, 40), // S
+    contarSi(41, 50), // E
+    contarSi(51, 60)  // C
+  ];
+
+  ["R","I","A","S","E","C"].forEach((cat, i) => {
+    document.getElementById("p" + cat).textContent = respuestas[i];
+  });
+
+  const max = Math.max(...respuestas);
+  const indices = respuestas.reduce((acc, val, idx) => val === max ? acc.concat(idx) : acc, []);
+  const perfiles = ["R - Realista", "I - Investigador", "A - Artístico", "S - Social", "E - Emprendedor", "C - Convencional"];
+  const perfil = indices.length > 1 ? "Empate entre: " + indices.map(i => perfiles[i]).join(" y ") : perfiles[indices[0]];
+
+  document.getElementById("perfilPredominante").innerHTML = `<strong>TU PERFIL PREDOMINANTE ES:</strong><br>${perfil}`;
+
+  const interpretaciones = {
+    "R": `<h3>R - REALISTA</h3><p><strong>Características:</strong> Práctico, técnico, prefiere actividades manuales, herramientas, máquinas, naturaleza.</p><p><strong>Carreras sugeridas:</strong> Mecánica, Electricidad, Construcción, Ingeniería Industrial, Agropecuaria, Enfermería Técnica.</p>`,
+    "I": `<h3>I - INVESTIGADOR</h3><p><strong>Características:</strong> Analítico, lógico, curioso, disfruta ciencias y problemas complejos.</p><p><strong>Carreras sugeridas:</strong> Medicina, Psicología, Biología, Química, Matemática, Ingeniería, Data Science.</p>`,
+    "A": `<h3>A - ARTÍSTICO</h3><p><strong>Características:</strong> Creativo, expresivo, con gusto por el arte y diseño.</p><p><strong>Carreras sugeridas:</strong> Diseño Gráfico, Arquitectura, Música, Arte, Publicidad, Comunicación Audiovisual.</p>`,
+    "S": `<h3>S - SOCIAL</h3><p><strong>Características:</strong> Empático, orientado a ayudar y enseñar.</p><p><strong>Carreras sugeridas:</strong> Psicología, Educación, Trabajo Social, Terapia, Enfermería, Docencia.</p>`,
+    "E": `<h3>E - EMPRENDEDOR</h3><p><strong>Características:</strong> Líder, seguro, comunicador, iniciativa para negocios.</p><p><strong>Carreras sugeridas:</strong> Administración, Marketing, Turismo, Derecho, Negocios Internacionales.</p>`,
+    "C": `<h3>C - CONVENCIONAL</h3><p><strong>Características:</strong> Organizado, metódico, le gustan números, datos y orden.</p><p><strong>Carreras sugeridas:</strong> Contabilidad, Administración, Estadística, Bancos, Secretariado, Informática Administrativa.</p>`
+  };
+
+  let interpretacionHTML = "";
+  if (indices.length > 1) {
+    interpretacionHTML = "<h3>EMPATE DETECTADO</h3><p>Tienes fortalezas en más de un área. Aquí las interpretaciones:</p>";
+    indices.forEach(i => interpretacionHTML += interpretaciones[["R","I","A","S","E","C"][i]]);
+  } else {
+    interpretacionHTML = interpretaciones[["R","I","A","S","E","C"][indices[0]]];
+  }
+
+  document.getElementById("interpretacion").innerHTML = interpretacionHTML;
+  document.getElementById("resultados").style.display = "block";
+  document.getElementById("resultados").scrollIntoView({ behavior: "smooth" });
+}
+
+function reiniciarTest() {
+  document.getElementById("nombres").value = "";
+  document.getElementById("apellidos").value = "";
+  document.getElementById("edad").value = "";
+  document.getElementById("institucion").value = "";
+  document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+  document.getElementById("resultados").style.display = "none";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+
+</body>
+</html>
